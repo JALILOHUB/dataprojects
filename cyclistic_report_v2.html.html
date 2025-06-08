@@ -1,338 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة معلومات تحليل بيانات Cyclistic</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 40vh;
-            max-height: 400px;
-        }
-    </style>
-    <!--
-    Narrative & Structure Plan:
-    1. Introduction & Overview: A big headline stat and a donut chart showing the Member vs. Casual rider split.
-    2. Ride Duration Analysis: A key insight comparing the average ride length between the two groups using a bar chart.
-    3. Daily Usage Patterns: A multi-series line chart to visualize the "Commuting vs. Leisure" hourly patterns.
-    4. Rideable Type Preferences: A grouped bar chart showing bike type preferences for each user segment.
-    5. Conclusion & Recommendations: A summary of findings and actionable recommendations presented with icons.
-
-    Visualization Choices:
-    - Data: Member vs Casual Ratio -> Goal: Compare -> Visualization: Donut Chart (Chart.js) -> Justification: Ideal for showing simple proportions of a whole.
-    - Data: Avg. Ride Duration -> Goal: Compare -> Visualization: Horizontal Bar Chart (Chart.js) -> Justification: Clear and direct comparison between two categories.
-    - Data: Rides per Hour -> Goal: Show Change/Relationship -> Visualization: Line Chart (Chart.js) -> Justification: Best for showing trends over a continuous interval (time).
-    - Data: Bike Type per User -> Goal: Compare/Composition -> Visualization: Grouped Bar Chart (Chart.js) -> Justification: Excellent for comparing multiple categories across two main groups.
-    - Data: Recommendations -> Goal: Organize/Inform -> Visualization: Styled HTML List with Unicode icons -> Justification: Clean, simple, and effective for listing points without complex diagrams.
-
-    Constraint Confirmation:
-    - NO SVG was used. All charts are rendered on HTML <canvas> elements by Chart.js.
-    - NO Mermaid JS was used.
-    -->
-</head>
-<body class="bg-gray-100 text-gray-800">
-
-    <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-[#005F73]">تحليل بيانات Cyclistic</h1>
-            <ul class="flex space-x-4 md:space-x-8">
-                <li><a href="index.html" class="hover:text-[#EE9B00]">التقرير الأولي</a></li>
-                <li><a href="#overview" class="hover:text-[#EE9B00]">نظرة عامة</a></li>
-                <li><a href="#duration" class="hover:text-[#EE9B00]">مدة الرحلة</a></li>
-                <li><a href="#patterns" class="hover:text-[#EE9B00]">الأنماط اليومية</a></li>
-                <li><a href="#preferences" class="hover:text-[#EE9B00]">التفضيلات</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container mx-auto p-4 md:p-8">
-
-        <!-- Section 1: Overview -->
-        <section id="overview" class="text-center mb-16 pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] mb-4">فهم سلوك المستخدمين: الأعضاء مقابل الركاب العاديين</h2>
-            <p class="text-lg max-w-3xl mx-auto text-gray-600">تحليل أكثر من 5 ملايين رحلة للكشف عن الفروقات الجوهرية بين العملاء السنويين والركاب العاديين، بهدف تحويلهم إلى أعضاء دائمين.</p>
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold mb-4 text-[#0A9396]">توزيع الرحلات حسب نوع العضوية</h3>
-                    <div class="chart-container mx-auto max-w-sm">
-                        <canvas id="userTypeChart"></canvas>
-                    </div>
-                </div>
-                <div class="text-right space-y-4">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h4 class="text-2xl font-bold text-[#CA6702]">3.5 مليون رحلة</h4>
-                        <p class="text-gray-600">من قبل الأعضاء، مما يظهر قاعدة عملاء قوية ومخلصة.</p>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h4 class="text-2xl font-bold text-[#BB3E03]">2.0 مليون رحلة</h4>
-                        <p class="text-gray-600">من قبل الركاب العاديين، مما يمثل فرصة نمو هائلة.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 2: Ride Duration -->
-        <section id="duration" class="mb-16 pt-16">
-            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">تحليل مدة الرحلة: مفتاح الفروقات السلوكية</h2>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                     <div class="text-center md:text-right">
-                        <h3 class="text-5xl font-extrabold text-[#AE2012] mb-4">أطول بـ 73%</h3>
-                        <p class="text-xl text-gray-700">يقضي الركاب العاديون وقتاً أطول على الدراجات في المتوسط، مما يشير إلى استخدامها لأغراض ترفيهية وجولات سياحية طويلة بدلاً من التنقلات اليومية السريعة.</p>
-                    </div>
-                    <div>
-                        <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">متوسط مدة الرحلة (بالدقائق)</h4>
-                        <div class="chart-container" style="height: 250px;">
-                            <canvas id="rideDurationChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: Daily Patterns -->
-        <section id="patterns" class="mb-16 pt-16">
-            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">الأنماط اليومية: تنقل مقابل ترفيه</h2>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <p class="text-center max-w-3xl mx-auto mb-6 text-gray-600">يُظهر الأعضاء نمط ذروتين واضح (صباحاً ومساءً) يتوافق مع أوقات التنقل من وإلى العمل. في المقابل، تتركز رحلات الركاب العاديين في فترة ما بعد الظهر والمساء، مما يعزز فرضية الاستخدام الترفيهي.</p>
-                <div class="chart-container" style="height: 45vh; max-height: 450px;">
-                    <canvas id="hourlyUsageChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 4: Preferences -->
-        <section id="preferences" class="mb-16 pt-16">
-            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">تفضيلات أنواع الدراجات</h2>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                 <p class="text-center max-w-3xl mx-auto mb-6 text-gray-600">يفضل كلا النوعين من المستخدمين الدراجات الكهربائية، لكن هذا التفضيل أكثر وضوحًا لدى الركاب العاديين. يشير هذا إلى أن راحة وسهولة الدراجة الكهربائية عامل جذب كبير لهذه الشريحة.</p>
-                <div class="chart-container" style="height: 45vh; max-height: 450px;">
-                    <canvas id="bikeTypeChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-         <!-- Section 5: Conclusion -->
-        <section id="conclusion" class="text-center pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] mb-4">خلاصة وتوصيات استراتيجية</h2>
-            <p class="text-lg max-w-3xl mx-auto text-gray-600 mb-8">بناءً على الفروقات السلوكية الواضحة، يمكن صياغة استراتيجيات تسويقية مستهدفة لتحويل الركاب العاديين إلى أعضاء سنويين.</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#0A9396]">
-                    <span class="text-4xl">🎯</span>
-                    <h3 class="text-xl font-bold my-3">التسويق القائم على التجربة</h3>
-                    <p>استهداف الركاب العاديين بحملات تركز على متعة الرحلات الترفيهية الطويلة، واستكشاف المدينة، والفوائد الصحية لركوب الدراجات في أوقات الفراغ.</p>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#EE9B00]">
-                    <span class="text-4xl">🎁</span>
-                    <h3 class="text-xl font-bold my-3">عروض عضوية مرنة</h3>
-                    <p>تصميم باقات عضوية جديدة قد تتضمن مزايا للدراجات الكهربائية، أو عضويات تجريبية قصيرة الأمد، لتشجيع الركاب العاديين على تجربة فوائد العضوية الكاملة.</p>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#AE2012]">
-                    <span class="text-4xl">⏰</span>
-                    <h3 class="text-xl font-bold my-3">حملات موجهة حسب الوقت</h3>
-                    <p>تركيز الإعلانات والعروض الترويجية الموجهة للركاب العاديين في فترات ما بعد الظهر وعطلات نهاية الأسبوع، حيث يكونون أكثر نشاطًا واستعدادًا للتجربة.</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="text-center p-6 mt-12 bg-gray-200">
-        <p>&copy; 2025 - تقرير تحليل بيانات Cyclistic.</p>
-    </footer>
-
-    <script>
-        // Color Palette: Brilliant Blues
-        const palette = {
-            primary: '#005F73',
-            secondary: '#0A9396',
-            accent1: '#94D2BD',
-            accent2: '#E9D8A6',
-            highlight1: '#EE9B00',
-            highlight2: '#CA6702',
-            highlight3: '#BB3E03',
-            highlight4: '#AE2012',
-            textDark: '#333333',
-            textLight: '#FFFFFF'
-        };
-
-        // Common Tooltip Configuration
-        const tooltipTitleCallback = {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        title: function(tooltipItems) {
-                            const item = tooltipItems[0];
-                            let label = item.chart.data.labels[item.dataIndex];
-                            if (Array.isArray(label)) {
-                              return label.join(' ');
-                            }
-                            return label;
-                        }
-                    }
-                },
-                legend: {
-                    position: 'top',
-                },
-            }
-        };
-
-        // Chart 1: User Type Doughnut Chart
-        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
-        new Chart(userTypeCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['أعضاء', 'عاديون'],
-                datasets: [{
-                    label: 'عدد الرحلات',
-                    data: [3505607, 1993683],
-                    backgroundColor: [palette.secondary, palette.highlight1],
-                    borderColor: palette.textLight,
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    },
-                    title: {
-                        display: false
-                    }
-                }
-            }
-        });
-
-        // Chart 2: Ride Duration Bar Chart
-        const rideDurationCtx = document.getElementById('rideDurationChart').getContext('2d');
-        new Chart(rideDurationCtx, {
-            type: 'bar',
-            data: {
-                labels: ['عاديون', 'أعضاء'],
-                datasets: [{
-                    label: 'متوسط مدة الرحلة (دقائق)',
-                    data: [20.99, 12.11],
-                    backgroundColor: [palette.highlight2, palette.primary],
-                    borderRadius: 5,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                     legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: {
-                            display: false
-                        }
-                    },
-                     y: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
-
-        // Chart 3: Hourly Usage Line Chart
-        const hourlyUsageCtx = document.getElementById('hourlyUsageChart').getContext('2d');
-        new Chart(hourlyUsageCtx, {
-            type: 'line',
-            data: {
-                labels: Array.from({length: 24}, (_, i) => i), // Hours 0-23
-                datasets: [
-                    {
-                        label: 'عاديون',
-                        data: [34068, 22567, 14073, 7870, 6389, 11540, 27722, 51083, 71991, 71992, 87499, 111237, 130054, 135493, 141842, 156915, 176603, 188616, 161608, 118316, 86176, 72268, 62837, 44924],
-                        borderColor: palette.highlight2,
-                        backgroundColor: `${palette.highlight2}33`,
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'أعضاء',
-                        data: [30954, 19070, 10907, 7545, 8384, 33149, 97873, 191424, 245476, 166302, 145259, 168417, 191834, 190014, 191283, 238011, 327569, 372348, 289885, 202105, 140307, 108842, 78944, 49705],
-                        borderColor: palette.primary,
-                        backgroundColor: `${palette.primary}33`,
-                        fill: true,
-                        tension: 0.4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: tooltipTitleCallback.plugins,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // Chart 4: Bike Type Preference Bar Chart
-        const bikeTypeCtx = document.getElementById('bikeTypeChart').getContext('2d');
-        new Chart(bikeTypeCtx, {
-            type: 'bar',
-            data: {
-                labels: ['عاديون', 'أعضاء'],
-                datasets: [
-                    {
-                        label: 'دراجة كلاسيكية',
-                        data: [869839, 1537117],
-                        backgroundColor: palette.secondary,
-                    },
-                    {
-                        label: 'دراجة كهربائية',
-                        data: [1042394, 1912357],
-                        backgroundColor: palette.highlight1,
-                    },
-                    {
-                        label: 'سكوتر كهربائي',
-                        data: [81450, 56133],
-                        backgroundColor: palette.accent1,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: tooltipTitleCallback.plugins,
-                scales: {
-                    x: {
-                        stacked: false,
-                    },
-                    y: {
-                        stacked: false,
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
