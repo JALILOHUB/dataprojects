@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقرير تحليل بيانات Cyclistic الشامل</title>
+    <title>Cyclistic Data Analysis Full Report</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
             background-color: #F8F8F8;
             color: #333333;
@@ -21,37 +21,37 @@
         }
         .card {
             background-color: #FFFFFF;
-            border-radius: 0.75rem; /* rounded-lg */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-            padding: 1.5rem; /* p-6 */
-            margin-bottom: 1.5rem; /* mb-6 */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            height: 40vh; /* Responsive height */
-            max-height: 400px; /* Max height to prevent excessive vertical space */
+            height: 40vh;
+            max-height: 400px;
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 350px; /* Slightly taller on larger screens */
+                height: 350px;
                 max-height: 450px;
             }
         }
     </style>
-    <!-- Color Palette: Brilliant Blues (Adapted for readability and contrast) -->
 </head>
 <body class="bg-gray-100 text-gray-800">
 
     <!-- Header -->
     <header class="bg-white shadow-md sticky top-0 z-10">
-        <nav class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center text-center md:text-right">
-            <h1 class="text-3xl font-bold text-[#005F73] mb-2 md:mb-0">تقرير تحليل بيانات Cyclistic الشامل</h1>
+        <nav class="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <h1 class="text-3xl font-bold text-[#005F73] mb-2 md:mb-0">Cyclistic Data Analysis Full Report</h1>
             <ul class="flex flex-wrap justify-center space-x-2 md:space-x-4">
-                <li><a href="#introduction" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">مقدمة</a></li>
-                <li><a href="#data-integration" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">دمج البيانات</a></li>
-                <li><a href="#eda" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">التحليل الاستكشافي</a></li>
-                <li><a href="#conclusions" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">الخلاصة والتوصيات</a></li>
+                <li><a href="#introduction" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">Introduction</a></li>
+                <li><a href="#data-integration" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">Data Integration</a></li>
+                <li><a href="#eda" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">Exploratory Analysis</a></li>
+                <li><a href="#conclusions" class="text-gray-600 hover:text-[#EE9B00] px-2 py-1 rounded transition-colors duration-200">Conclusions & Recs</a></li>
+                <li><a href="cyclistic_report_arab.html" class="hover:text-[#EE9B00]">Arabic Version</a></li>
             </ul>
         </nav>
     </header>
@@ -61,24 +61,24 @@
 
         <!-- Section 1: Introduction -->
         <section id="introduction" class="mb-16 pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">مقدمة المشروع: فهم سلوك مستخدمي Cyclistic</h2>
+            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">Project Introduction: Understanding Cyclistic User Behavior</h2>
             <p class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto text-center mb-8">
-                يهدف هذا المشروع إلى تقديم تحليل معمق لبيانات رحلات الدراجات الخاصة بشركة **Cyclistic Bike Share**. كان الهدف الأسمى هو الكشف عن أنماط الاستخدام والفروقات السلوكية بين شريحتين رئيسيتين من العملاء: **الأعضاء السنويين (Members)** و **المستخدمين العاديين (Casual Riders)**. هذا الفهم الدقيق سيشكل الأساس لصياغة استراتيجيات تسويقية فعالة تهدف إلى تحويل المستخدمين العاديين إلى أعضاء دائمين، وبالتالي تعزيز قاعدة العملاء وولائهم.
+                This project aims to provide an in-depth analysis of **Cyclistic Bike Share** ride data. The ultimate goal was to uncover usage patterns and behavioral differences between two key customer segments: **Annual Members** and **Casual Riders**. This precise understanding will form the foundation for crafting effective marketing strategies aimed at converting casual riders into loyal members, thereby strengthening the customer base and loyalty.
             </p>
             <div class="card grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="text-center md:text-right">
-                    <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">توزيع إجمالي الرحلات حسب نوع العضوية</h3>
+                <div class="text-center md:text-left">
+                    <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Total Ride Distribution by Membership Type</h3>
                     <p class="text-gray-700 mb-4">
-                        تم تحليل ما يزيد عن 5.4 مليون رحلة دراجة. يوضح هذا الرسم البياني الشريحتين الرئيسيتين من المستخدمين اللتين تمثلان قاعدة عملائنا. فهم هذه الشريحة الأولية أمر بالغ الأهمية لتوجيه جهودنا.
+                        Over 5.4 million bike rides were analyzed. This chart illustrates the two main user segments that constitute our customer base. Understanding this initial segmentation is crucial for directing our efforts.
                     </p>
                     <div class="space-y-3">
-                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-right">
-                            <span class="text-2xl font-bold text-[#CA6702]">3,505,607 رحلة</span>
-                            <p class="text-gray-600 text-sm">من قبل الأعضاء: شريحة تمثل قاعدة العملاء المستقرة.</p>
+                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-left">
+                            <span class="text-2xl font-bold text-[#CA6702]">3,505,607 Rides</span>
+                            <p class="text-gray-600 text-sm">By Members: A segment representing a strong and loyal customer base.</p>
                         </div>
-                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-right">
-                            <span class="text-2xl font-bold text-[#BB3E03]">1,993,683 رحلة</span>
-                            <p class="text-gray-600 text-sm">من قبل الركاب العاديين: تمثل فرصة نمو مستهدفة للشركة.</p>
+                        <div class="bg-gray-50 p-3 rounded-md border border-gray-200 text-left">
+                            <span class="text-2xl font-bold text-[#BB3E03]">1,993,683 Rides</span>
+                            <p class="text-gray-600 text-sm">By Casual Riders: Represents a significant growth opportunity for the company.</p>
                         </div>
                     </div>
                 </div>
@@ -90,38 +90,37 @@
 
         <!-- Section 2: Data Integration & Preparation -->
         <section id="data-integration" class="mb-16 pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">المرحلة 1: دمج وتجهيز البيانات الخام</h2>
+            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">Phase 1: Raw Data Integration and Preparation</h2>
             <p class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto text-center mb-8">
-                تضمنت هذه المرحلة الحاسمة جمع وتوحيد 12 ملفًا شهريًا منفصلًا من بيانات رحلات الدراجات (بإجمالي 5,499,423 صفًا). لقد قمنا بتنفيذ هذه العملية باستخدام بيئة Google Colab، مستغلين قوة مكتبة Pandas في Python وقاعدة بيانات SQLite لدمج البيانات بكفاءة وتطبيق معايير تنظيف أولية صارمة.
+                This critical phase involved collecting and unifying 12 separate monthly ride data files (totaling 5,499,423 rows). We executed this process within a Google Colab environment, leveraging the power of Python's Pandas library and an SQLite database to efficiently merge the data and apply stringent initial cleaning criteria.
             </p>
             <div class="card mb-8">
-                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">التحديات الرئيسية والحلول في دمج البيانات</h3>
+                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Key Challenges & Solutions in Data Integration</h3>
                 <p class="text-gray-700 mb-4">
-                    واجهنا تحديات متعددة أثناء دمج البيانات الخام، ولكن بفضل المثابرة ومعالجة الأخطاء المنهجية، تمكنا من تجاوزها:
+                    We encountered multiple challenges during the raw data integration, but through perseverance and systematic error handling, we successfully overcame them:
                 </p>
                 <ul class="list-disc list-inside text-gray-700 leading-relaxed">
                     <li class="mb-2">
-                        <span class="font-semibold text-[#CA6702]">مشاكل في الوصول إلى قاعدة البيانات وقراءة ملفات CSV:</span> ظهرت أخطاء مثل `sqlite3.OperationalError` أو `EmptyDataError`. تم حلها بضمان المسارات الصحيحة، تنظيف بيئة العمل قبل كل تشغيل، واستخدام معلمات قراءة CSV دقيقة (مثل `header=0`, `quotechar='"'`, `engine='python'`) مع كتل `try-except` لتخطي الملفات المعيبة.
+                        <span class="font-semibold text-[#CA6702]">Database Access & CSV Reading Issues:</span> Errors like `sqlite3.OperationalError` or `EmptyDataError` appeared. These were resolved by ensuring correct paths, cleaning the working environment before each run, and using precise CSV reading parameters (e.g., `header=0`, `quotechar='"'`, `engine='python'`) with `try-except` blocks to skip malformed files.
                     </li>
                     <li class="mb-2">
-                        <span class="font-semibold text-[#CA6702]">عدم توحيد أسماء الأعمدة:</span> كانت أسماء الأعمدة تختلف بين الملفات الشهرية. تم معالجة هذا بتوحيدها (بأحرف صغيرة وبدون مسافات) أثناء عملية القراءة لضمان توافقها في استعلامات الدمج.
+                        <span class="font-semibold text-[#CA6702]">Inconsistent Column Naming:</span> Column names varied across monthly files. This was addressed by standardizing them (lowercase, no spaces) during the reading process to ensure compatibility for merge queries.
                     </li>
                     <li class="mb-2">
-                        <span class="font-semibold text-[#CA6702]">صعوبة تحديد الأعمدة المشتركة وبناء استعلامات الدمج:</span> كانت هناك تحديات في بناء استعلام `UNION ALL` بشكل صحيح وفشل في تحديد الأعمدة المشتركة بدقة. تم التغلب عليها بتحسين منطق اكتشاف الأعمدة المشتركة باستخدام تقاطع المجموعات والتحقق الدقيق من وجود الأعمدة في شروط التصفية.
+                        <span class="font-semibold text-[#CA6702]">Difficulty in Identifying Common Columns & Building Merge Queries:</span> Challenges arose in correctly constructing `UNION ALL` queries and precisely identifying common columns. This was overcome by refining the logic for common column detection using set intersection and meticulously verifying the presence of columns in filtering conditions.
                     </li>
                     <li class="mb-2">
-                        <span class="font-semibold text-[#CA6702]">مشاكل في عرض البيانات بعد الدمج:</span> في البداية، كانت `df.head()` و `df.tail()` تعرض نفس الصفوف القليلة، مع ترقيم خاطئ للـ DataFrame بأكمله. تم تصحيح ذلك بتحميل جميع الصفوف من قاعدة البيانات (`SELECT * FROM combined_trips;`) إلى الـ DataFrame في ذاكرة Pandas، مما سمح بالتحليل وعرض العينات بشكل صحيح.
+                        <span class="font-semibold text-[#CA6702]">Data Display Issues Post-Merge:</span> Initially, `df.head()` and `df.tail()` showed only a few rows, with incorrect overall DataFrame indexing. This was corrected by loading all rows from the database (`SELECT * FROM combined_trips;`) into the Pandas DataFrame, allowing for proper analysis and sample display.
                     </li>
                 </ul>
-                <li><a href="old_report.html" class="hover:text-[#EE9B00]">التقرير الأولي</a></li>
             </div>
             <div class="card">
-                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">نظرة على البيانات المدمجة النهائية</h3>
+                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Overview of Final Integrated Data</h3>
                 <p class="text-gray-700 mb-4">
-                    بعد تجاوز التحديات، أصبح لدينا DataFrame موحد وجاهز للتحليل. تم حساب مدة الرحلة بالثواني والدقائق كأعمدة جديدة. الجدول أدناه يوضح عينة من الصفوف النهائية:
+                    After overcoming challenges, we have a unified and clean DataFrame ready for analysis. Ride duration in seconds and minutes was calculated as new columns. The table below shows a sample of the final rows:
                 </p>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white border border-gray-200 text-right text-sm">
+                    <table class="min-w-full bg-white border border-gray-200 text-left text-sm">
                         <thead class="bg-[#005F73] text-white">
                             <tr>
                                 <th class="py-2 px-4 border-b">started_at</th>
@@ -177,20 +176,20 @@
                     </table>
                 </div>
 
-                <h3 class="text-2xl font-bold my-4 text-[#0A9396]">جودة البيانات بعد الدمج والتنظيف</h3>
+                <h3 class="text-2xl font-bold my-4 text-[#0A9396]">Data Quality After Integration and Cleaning</h3>
                 <p class="text-gray-700 mb-4">
-                    لقد قمنا بمعالجة القيم الشاذة والمفقودة لضمان أعلى مستوى من الجودة للتحليل.
+                    We performed outlier and missing value handling to ensure the highest level of data quality for analysis.
                 </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-right">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                     <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
-                        <h4 class="font-semibold text-blue-800 mb-2">معالجة القيم الشاذة الجغرافية:</h4>
-                        <p class="text-sm text-blue-700">تم إزالة 133 صفًا فقط من إجمالي 5.4 مليون صف كانت تحتوي على إحداثيات جغرافية غير منطقية (خارج نطاق شيكاغو).</p>
-                        <p class="text-sm text-blue-700">القيم الجديدة لأقل وأقصى خطوط الطول والعرض أصبحت ضمن النطاقات المقبولة (41.6-42.1 للعرض، -87.9 إلى -87.5 للطول).</p>
+                        <h4 class="font-semibold text-blue-800 mb-2">Geographical Outlier Handling:</h4>
+                        <p class="text-sm text-blue-700">Only 133 rows out of over 5.4 million were removed due to illogical geographical coordinates (outside Chicago's reasonable range).</p>
+                        <p class="text-sm text-blue-700">Min and max latitude/longitude values are now within acceptable ranges (41.6-42.1 for lat, -87.9 to -87.5 for lng).</p>
                     </div>
                     <div class="bg-yellow-50 p-4 rounded-md border border-yellow-200">
-                        <h4 class="font-semibold text-yellow-800 mb-2">القيم المفقودة في أعمدة المحطات:</h4>
-                        <p class="text-sm text-yellow-700">تم تحديد حوالي مليون قيمة مفقودة في أعمدة معرفات وأسماء محطات البدء والانتهاء.</p>
-                        <p class="text-sm text-yellow-700">التحليل أظهر أن هذه القيم مرتبطة بشكل كبير بالدراجات الكهربائية والسكوتر الكهربائي (التي لا تستخدم محطات ثابتة)، وبالتالي لا تعتبر مشكلة جودة، بل هي سمة طبيعية للبيانات.</p>
+                        <h4 class="font-semibold text-yellow-800 mb-2">Missing Values in Station Columns:</h4>
+                        <p class="text-sm text-yellow-700">Around 1 million missing values were identified in start/end station ID and name columns.</p>
+                        <p class="text-sm text-yellow-700">Analysis revealed these are strongly associated with electric bikes and scooters (which are dockless), thus not a data quality issue but a natural data characteristic.</p>
                     </div>
                 </div>
             </div>
@@ -198,38 +197,38 @@
 
         <!-- Section 3: Exploratory Data Analysis (EDA) -->
         <section id="eda" class="mb-16 pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">المرحلة 2: التحليل الاستكشافي للبيانات (EDA)</h2>
+            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">Phase 2: Exploratory Data Analysis (EDA)</h2>
             <p class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto text-center mb-8">
-                بعد ضمان جودة البيانات، بدأنا في التحليل الاستكشافي للبيانات للكشف عن الأنماط والسلوكيات الخفية بين شرائح المستخدمين المختلفة.
+                With data quality assured, we proceeded with Exploratory Data Analysis to uncover hidden patterns and behaviors across different user segments.
             </p>
 
             <!-- Ride Duration Analysis -->
             <div class="card mb-8">
-                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">أنماط مدة الرحلة</h3>
+                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Ride Duration Patterns</h3>
                 <p class="text-gray-700 mb-6">
-                    تعتبر مدة الرحلة مؤشرًا رئيسيًا للغرض من استخدام الدراجة. تحليل هذا المتغير يكشف عن فروقات سلوكية واضحة بين الأعضاء والمستخدمين العاديين.
+                    Ride duration is a key indicator of the purpose of bike use. Analyzing this variable reveals clear behavioral differences between members and casual riders.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-8">
                     <div class="chart-container">
                         <canvas id="rideDurationAvgChart"></canvas>
                     </div>
-                    <div class="text-center md:text-right">
-                        <h4 class="text-4xl font-extrabold text-[#AE2012] mb-3">21 دقيقة مقابل 12 دقيقة</h4>
+                    <div class="text-center md:text-left">
+                        <h4 class="text-4xl font-extrabold text-[#AE2012] mb-3">21 Mins vs. 12 Mins</h4>
                         <p class="text-lg text-gray-700">
-                            يُظهر المستخدمون العاديون متوسط مدة رحلة أطول بكثير (حوالي 21 دقيقة) مقارنة بالأعضاء (حوالي 12 دقيقة). هذا يشير إلى أنهم قد يستخدمون الدراجات لأغراض ترفيهية أو جولات أطول.
+                            Casual riders show a significantly longer average ride duration (approx. 21 minutes) compared to members (approx. 12 minutes). This suggests they might use bikes for recreational purposes or longer tours.
                         </p>
                     </div>
                 </div>
-                <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">توزيع مدة الرحلة (بالدقائق) - تركيز على الرحلات الأقصر</h4>
+                <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">Ride Length Distribution (Minutes) - Focus on Shorter Rides</h4>
                 <p class="text-gray-700 mb-6 text-center">
-                    لتوضيح التوزيع الفعلي لغالبية الرحلات، قمنا بتركيز الرسم البياني على الرحلات التي تقل مدتها عن 35 دقيقة.
+                    To better visualize the actual distribution of most rides, we focused the histogram on rides shorter than 35 minutes.
                 </p>
                 <div class="chart-container">
                     <canvas id="rideLengthHist"></canvas>
                 </div>
-                 <h4 class="text-xl font-bold my-4 text-center text-[#0A9396]">توزيع مدة الرحلة حسب نوع العضوية (Box Plot)</h4>
+                 <h4 class="text-xl font-bold my-4 text-center text-[#0A9396]">Ride Length Distribution by Member Type (Box Plot)</h4>
                 <p class="text-gray-700 mb-6 text-center">
-                    يوضح الـ Box Plot التشتت والربيعيات لمدد الرحلات لكل شريحة، مؤكداً أن الركاب العاديين لديهم مدى أوسع للرحلات الطويلة.
+                    This box plot illustrates the spread and quartiles of ride durations for each segment, confirming that casual riders have a wider range of longer rides.
                 </p>
                 <div class="chart-container">
                     <canvas id="rideLengthBoxPlot"></canvas>
@@ -238,9 +237,9 @@
 
             <!-- Rideable Type Preferences -->
             <div class="card mb-8">
-                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">تفضيلات أنواع الدراجات</h3>
+                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Rideable Type Preferences</h3>
                 <p class="text-gray-700 mb-6">
-                    التحليل يكشف عن أنواع الدراجات الأكثر شعبية لكل شريحة، مما يساعد في فهم احتياجاتهم وتفضيلاتهم.
+                    This analysis reveals the most popular bike types for each segment, helping understand their needs and preferences.
                 </p>
                 <div class="chart-container">
                     <canvas id="bikeTypeChart"></canvas>
@@ -249,20 +248,20 @@
 
             <!-- Temporal Usage Patterns -->
             <div class="card">
-                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">الأنماط الزمنية للاستخدام (ساعات اليوم وأيام الأسبوع)</h3>
+                <h3 class="text-2xl font-bold mb-4 text-[#0A9396]">Temporal Usage Patterns (Hour of Day & Day of Week)</h3>
                 <p class="text-gray-700 mb-6">
-                    تكشف الأنماط الزمنية عن كيفية استخدام الدراجات على مدار اليوم والأسبوع، مما يبرز الفروقات بين سلوك التنقل والترفيه.
+                    Temporal patterns reveal how bikes are used throughout the day and week, highlighting differences between commuting and leisure behavior.
                 </p>
-                <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">عدد الرحلات حسب ساعة اليوم ونوع العضوية</h4>
+                <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">Number of Rides by Hour of Day and Member Type</h4>
                 <p class="text-gray-700 mb-6 text-center">
-                    يُظهر الأعضاء نمط ذروتين (صباح ومساء) يشير إلى التنقل، بينما يظهر العاديون ذروة واحدة في منتصف الظهيرة/بعد الظهر للاستخدام الترفيهي.
+                    Members show a two-peak pattern (morning and evening) typical of commuting, while casual riders show a single peak in the afternoon/early evening for recreational use.
                 </p>
                 <div class="chart-container">
                     <canvas id="hourlyUsageChart"></canvas>
                 </div>
-                <h4 class="text-xl font-bold mt-8 mb-4 text-center text-[#0A9396]">عدد الرحلات حسب يوم الأسبوع ونوع العضوية</h4>
+                <h4 class="text-xl font-bold mt-8 mb-4 text-center text-[#0A9396]">Number of Rides by Day of Week and Member Type</h4>
                 <p class="text-gray-700 mb-6 text-center">
-                    يُبرز هذا الرسم البياني الفرق في الأنماط بين أيام الأسبوع وعطلات نهاية الأسبوع لكل شريحة.
+                    This chart highlights the difference in patterns between weekdays and weekends for each segment.
                 </p>
                 <div class="chart-container">
                     <canvas id="dailyUsageChart"></canvas>
@@ -272,25 +271,25 @@
 
         <!-- Section 4: Conclusion & Recommendations -->
         <section id="conclusions" class="pt-16">
-            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">الخلاصة والرؤى الرئيسية والتوصيات</h2>
+            <h2 class="text-4xl font-bold text-[#005F73] text-center mb-6">Conclusions, Key Insights & Recommendations</h2>
             <p class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto text-center mb-8">
-                لقد كشف التحليل الاستكشافي عن فروقات جوهرية في سلوك استخدام الدراجات بين الأعضاء والمستخدمين العاديين، مما يفتح الباب أمام استراتيجيات تسويقية مستهدفة لتحويل المستخدمين العاديين إلى أعضاء.
+                Exploratory analysis has revealed fundamental differences in bike usage behavior between members and casual riders, paving the way for targeted marketing strategies to convert casual riders into members.
             </p>
             <div class="card grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="p-6 border-t-4 border-[#0A9396] rounded-md">
                     <span class="text-5xl mb-3 block">🎯</span>
-                    <h3 class="text-xl font-bold mb-2">التسويق القائم على التجربة</h3>
-                    <p class="text-gray-700 text-sm">استهداف الركاب العاديين بحملات تركز على متعة الرحلات الترفيهية الطويلة، واستكشاف المدينة، والفوائد الصحية لركوب الدراجات في أوقات الفراغ.</p>
+                    <h3 class="text-xl font-bold mb-2">Experience-Driven Marketing</h3>
+                    <p class="text-gray-700 text-sm">Target casual riders with campaigns focusing on the joy of long recreational rides, city exploration, and health benefits of leisure cycling.</p>
                 </div>
                 <div class="p-6 border-t-4 border-[#EE9B00] rounded-md">
                     <span class="text-5xl mb-3 block">🎁</span>
-                    <h3 class="text-xl font-bold mb-2">عروض عضوية مرنة</h3>
-                    <p class="text-gray-700 text-sm">تصميم باقات عضوية جديدة قد تتضمن مزايا للدراجات الكهربائية، أو عضويات تجريبية قصيرة الأمد، لتشجيع الركاب العاديين على تجربة فوائد العضوية الكاملة.</p>
+                    <h3 class="text-xl font-bold mb-2">Flexible Membership Offers</h3>
+                    <p class="text-gray-700 text-sm">Design new membership packages that might include electric bike benefits or short-term trial memberships to encourage casual riders to experience full membership benefits.</p>
                 </div>
                 <div class="p-6 border-t-4 border-[#AE2012] rounded-md">
                     <span class="text-5xl mb-3 block">⏰</span>
-                    <h3 class="text-xl font-bold mb-2">حملات موجهة حسب الوقت</h3>
-                    <p class="text-gray-700 text-sm">تركيز الإعلانات والعروض الترويجية الموجهة للركاب العاديين في فترات ما بعد الظهر وعطلات نهاية الأسبوع، حيث يكونون أكثر نشاطًا واستعدادًا للتجربة.</p>
+                    <h3 class="text-xl font-bold mb-2">Time-Targeted Campaigns</h3>
+                    <p class="text-gray-700 text-sm">Focus advertisements and promotions for casual riders during afternoon and weekend periods, when they are most active and receptive to engaging.</p>
                 </div>
             </div>
         </section>
@@ -298,20 +297,20 @@
     </main>
 
     <footer class="text-center p-6 mt-12 bg-gray-200 text-gray-600">
-        <p>&copy; 2025 - تقرير تحليل بيانات Cyclistic. جميع الحقوق محفوظة.</p>
+        <p>&copy; 2025 - Cyclistic Data Analysis Report. All rights reserved.</p>
     </footer>
 
     <script>
         // Color Palette: Brilliant Blues
         const palette = {
-            primary: '#005F73',       // Dark Teal
-            secondary: '#0A9396',     // Medium Teal
-            accent1: '#94D2BD',       // Light Teal/Mint
-            accent2: '#E9D8A6',       // Muted Yellow
-            highlight1: '#EE9B00',    // Bright Orange
-            highlight2: '#CA6702',    // Darker Orange
-            highlight3: '#BB3E03',    // Red-Orange
-            highlight4: '#AE2012',    // Dark Red
+            primary: '#005F73',
+            secondary: '#0A9396',
+            accent1: '#94D2BD',
+            accent2: '#E9D8A6',
+            highlight1: '#EE9B00',
+            highlight2: '#CA6702',
+            highlight3: '#BB3E03',
+            highlight4: '#AE2012',
             textDark: '#333333',
             textLight: '#FFFFFF'
         };
@@ -345,7 +344,7 @@
                             const item = tooltipItems[0];
                             let label = item.chart.data.labels[item.dataIndex];
                             if (Array.isArray(label)) {
-                              return label.join(' '); // Join multiline label for tooltip title
+                              return label.join(' ');
                             }
                             return label;
                         }
@@ -355,7 +354,7 @@
                     position: 'top',
                     labels: {
                         font: {
-                            family: 'Cairo'
+                            family: 'Inter'
                         }
                     }
                 }
@@ -366,14 +365,14 @@
                 x: {
                     ticks: {
                         font: {
-                            family: 'Cairo'
+                            family: 'Inter'
                         }
                     }
                 },
                 y: {
                     ticks: {
                         font: {
-                            family: 'Cairo'
+                            family: 'Inter'
                         }
                     }
                 }
@@ -385,9 +384,9 @@
         new Chart(userTypeCtx, {
             type: 'doughnut',
             data: {
-                labels: ['أعضاء', 'عاديون'],
+                labels: ['Members', 'Casual Riders'],
                 datasets: [{
-                    label: 'عدد الرحلات',
+                    label: 'Number of Rides',
                     data: [3505607, 1993683],
                     backgroundColor: [palette.secondary, palette.highlight1],
                     borderColor: palette.textLight,
@@ -400,7 +399,7 @@
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { font: { family: 'Cairo' } }
+                        labels: { font: { family: 'Inter' } }
                     },
                     title: { display: false },
                     tooltip: chartPluginsConfig.plugins.tooltip
@@ -413,9 +412,9 @@
         new Chart(rideDurationAvgCtx, {
             type: 'bar',
             data: {
-                labels: ['عاديون', 'أعضاء'],
+                labels: ['Casual Riders', 'Members'],
                 datasets: [{
-                    label: 'متوسط مدة الرحلة (دقائق)',
+                    label: 'Avg. Ride Duration (Minutes)',
                     data: [20.99, 12.11],
                     backgroundColor: [palette.highlight2, palette.primary],
                     borderRadius: 5,
@@ -423,7 +422,7 @@
                 }]
             },
             options: {
-                indexAxis: 'y', // Horizontal bar chart
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
@@ -434,26 +433,25 @@
                     x: {
                         beginAtZero: true,
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     }
                 }
             }
         });
 
         // Chart 3: Ride Length Histogram (EDA - Part 2)
-        // Data for bins is manually created to represent the shape from the image
         const rideLengthHistCtx = document.getElementById('rideLengthHist').getContext('2d');
         new Chart(rideLengthHistCtx, {
             type: 'bar',
             data: {
-                labels: Array.from({length: 35 / 2 + 1}, (_, i) => i * 2), // Bins approx every 2 minutes for 0-35
+                labels: Array.from({length: 35 / 2 + 1}, (_, i) => i * 2),
                 datasets: [{
-                    label: 'عدد الرحلات',
-                    data: [220000, 500000, 600000, 550000, 480000, 350000, 250000, 180000, 120000, 80000, 50000, 30000, 20000, 10000, 5000, 2000, 1000, 500], // Representative counts based on image
+                    label: 'Number of Rides',
+                    data: [220000, 500000, 600000, 550000, 480000, 350000, 250000, 180000, 120000, 80000, 50000, 30000, 20000, 10000, 5000, 2000, 1000, 500],
                     backgroundColor: palette.secondary,
                     borderColor: palette.primary,
                     borderWidth: 1
@@ -464,16 +462,16 @@
                 scales: {
                     x: {
                         type: 'category',
-                        labels: Array.from({length: 35 / 2 + 1}, (_, i) => i * 2), // Use categories for x-axis
+                        labels: Array.from({length: 35 / 2 + 1}, (_, i) => i * 2),
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            font: { family: 'Cairo' },
+                            font: { family: 'Inter' },
                             callback: function(value, index, values) {
-                                return value / 1000000 + 'M'; // Format Y-axis labels to Millions
+                                return value / 1000000 + 'M';
                             }
                         }
                     }
@@ -482,26 +480,25 @@
         });
 
         // Chart 4: Ride Length Box Plot (EDA - Part 3)
-        // User provided the image, so I'll create a placeholder for the canvas and text explanation.
         const rideLengthBoxPlotCtx = document.getElementById('rideLengthBoxPlot').getContext('2d');
         new Chart(rideLengthBoxPlotCtx, {
-            type: 'bar', // Using bar to mimic a simple comparison of quartiles visually if needed
+            type: 'bar',
             data: {
-                labels: ['عاديون', 'أعضاء'],
+                labels: ['Casual Riders', 'Members'],
                 datasets: [
                     {
-                        label: 'الربع الأول (25%)',
-                        data: [7, 5], // Representative Q1 values (based on visual approx from your image)
+                        label: 'Q1 (25th Percentile)',
+                        data: [7, 5],
                         backgroundColor: palette.accent1,
                     },
                     {
-                        label: 'الوسيط (50%)',
-                        data: [12, 9], // Representative Median values (based on visual approx from your image)
+                        label: 'Median (50th Percentile)',
+                        data: [12, 9],
                         backgroundColor: palette.secondary,
                     },
                     {
-                        label: 'الربع الثالث (75%)',
-                        data: [22, 14], // Representative Q3 values (based on visual approx from your image)
+                        label: 'Q3 (75th Percentile)',
+                        data: [22, 14],
                         backgroundColor: palette.primary,
                     }
                 ]
@@ -513,20 +510,20 @@
                     tooltip: chartPluginsConfig.plugins.tooltip,
                     legend: {
                         position: 'right',
-                        labels: { font: { family: 'Cairo' } }
+                        labels: { font: { family: 'Inter' } }
                     }
                 },
                 scales: {
                     x: {
-                        stacked: false, // Not truly stacked box plot, but conceptual
+                        stacked: false,
                         beginAtZero: true,
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         stacked: false,
                         grid: { display: false },
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     }
                 }
             }
@@ -537,20 +534,20 @@
         new Chart(bikeTypeCtx, {
             type: 'bar',
             data: {
-                labels: ['عاديون', 'أعضاء'],
+                labels: ['Casual Riders', 'Members'],
                 datasets: [
                     {
-                        label: 'دراجة كلاسيكية',
+                        label: 'Classic Bike',
                         data: [869839, 1537117],
                         backgroundColor: palette.secondary,
                     },
                     {
-                        label: 'دراجة كهربائية',
+                        label: 'Electric Bike',
                         data: [1042394, 1912357],
                         backgroundColor: palette.highlight1,
                     },
                     {
-                        label: 'سكوتر كهربائي',
+                        label: 'Electric Scooter',
                         data: [81450, 56133],
                         backgroundColor: palette.accent1,
                     }
@@ -560,16 +557,16 @@
                 ...chartPluginsConfig,
                 scales: {
                     x: {
-                        stacked: false, // Grouped bar chart
-                        ticks: { font: { family: 'Cairo' } }
+                        stacked: false,
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         stacked: false,
                         beginAtZero: true,
                         ticks: {
-                            font: { family: 'Cairo' },
+                            font: { family: 'Inter' },
                             callback: function(value, index, values) {
-                                return value / 1000000 + 'M'; // Format Y-axis labels to Millions
+                                return value / 1000000 + 'M';
                             }
                         }
                     }
@@ -582,21 +579,21 @@
         new Chart(hourlyUsageCtx, {
             type: 'line',
             data: {
-                labels: Array.from({length: 24}, (_, i) => i + 'h'), // Hours 0-23
+                labels: Array.from({length: 24}, (_, i) => i + 'h'),
                 datasets: [
                     {
-                        label: 'عاديون',
+                        label: 'Casual Riders',
                         data: [34068, 22567, 14073, 7870, 6389, 11540, 27722, 51083, 71991, 71992, 87499, 111237, 130054, 135493, 141842, 156915, 176603, 188616, 161608, 118316, 86176, 72268, 62837, 44924],
                         borderColor: palette.highlight2,
-                        backgroundColor: `${palette.highlight2}33`, // Lighter fill
+                        backgroundColor: `${palette.highlight2}33`,
                         fill: true,
                         tension: 0.4
                     },
                     {
-                        label: 'أعضاء',
+                        label: 'Members',
                         data: [30954, 19070, 10907, 7545, 8384, 33149, 97873, 191424, 245476, 166302, 145259, 168417, 191834, 190014, 191283, 238011, 327569, 372348, 289885, 202105, 140307, 108842, 78944, 49705],
                         borderColor: palette.primary,
-                        backgroundColor: `${palette.primary}33`, // Lighter fill
+                        backgroundColor: `${palette.primary}33`,
                         fill: true,
                         tension: 0.4
                     }
@@ -606,14 +603,14 @@
                 ...chartPluginsConfig,
                 scales: {
                     x: {
-                        ticks: { font: { family: 'Cairo' } }
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            font: { family: 'Cairo' },
+                            font: { family: 'Inter' },
                             callback: function(value, index, values) {
-                                return value / 1000 + 'k'; // Format Y-axis labels to thousands
+                                return value / 1000 + 'k';
                             }
                         }
                     }
@@ -622,21 +619,20 @@
         });
 
         // Chart 7: Daily Usage Bar Chart (EDA - Part 6)
-        // Representative data for rides_by_day_member_casual based on typical patterns
         const dailyUsageCtx = document.getElementById('dailyUsageChart').getContext('2d');
         new Chart(dailyUsageCtx, {
             type: 'bar',
             data: {
-                labels: ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'],
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
                 datasets: [
                     {
-                        label: 'عاديون',
-                        data: [150000, 140000, 130000, 160000, 200000, 650000, 550000], // Sample data
+                        label: 'Casual Riders',
+                        data: [150000, 140000, 130000, 160000, 200000, 650000, 550000],
                         backgroundColor: palette.highlight2,
                     },
                     {
-                        label: 'أعضاء',
-                        data: [500000, 550000, 520000, 580000, 450000, 400000, 300000], // Sample data
+                        label: 'Members',
+                        data: [500000, 550000, 520000, 580000, 450000, 400000, 300000],
                         backgroundColor: palette.primary,
                     }
                 ]
@@ -645,16 +641,16 @@
                 ...chartPluginsConfig,
                 scales: {
                     x: {
-                        stacked: false, // Grouped bar chart
-                        ticks: { font: { family: 'Cairo' } }
+                        stacked: false,
+                        ticks: { font: { family: 'Inter' } }
                     },
                     y: {
                         stacked: false,
                         beginAtZero: true,
                         ticks: {
-                            font: { family: 'Cairo' },
+                            font: { family: 'Inter' },
                             callback: function(value, index, values) {
-                                return value / 1000000 + 'M'; // Format Y-axis labels to Millions
+                                return value / 1000000 + 'M';
                             }
                         }
                     }
@@ -662,7 +658,6 @@
             }
         });
 
-        // Function to handle label wrapping for chart.js if needed in future
         Chart.helpers.each(Chart.instances, function(chart) {
             if (chart.options.scales && chart.options.scales.x && chart.options.scales.x.ticks) {
                 const originalCallback = chart.options.scales.x.ticks.callback;
@@ -672,7 +667,6 @@
                 };
             }
             if (chart.options.plugins && chart.options.plugins.tooltip && chart.options.plugins.tooltip.callbacks) {
-                // Ensure the specific tooltip title callback is always applied as per requirement.
                 chart.options.plugins.tooltip.callbacks.title = chartPluginsConfig.plugins.tooltip.callbacks.title;
             }
         });
