@@ -3,439 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشروع تحليل بيانات رحلات الدراجات: من التحديات إلى الحلول</title>
+    <title>لوحة معلومات تحليل بيانات Cyclistic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- 
-        Chosen Palette: Warm Neutrals (Creamy White, Slate Gray, Muted Teal)
-        Application Structure Plan: A single-page, vertical scrolling application with a sticky nav bar. The main section is an interactive "Investigation" timeline using accordions to detail each debugging challenge and solution, culminating in a final data summary with an interactive chart. This structure best tells the chronological story of problem-solving while keeping the information organized and explorable, rather than a static report format.
-        Visualization & Content Choices: Report Info: Debugging steps -> Goal: Narrate/Explain -> Viz: Interactive accordion timeline with LLM-powered detailed explanations. Report Info: Final data sample -> Goal: Inform/Explore -> Viz: HTML table updated with JS buttons and an interactive Chart.js pie chart for user type distribution. Report Info: Key stats -> Goal: Inform quickly -> Viz: KPI cards at the top. All choices prioritize interactivity and telling a clear story. No SVG/Mermaid used.
-        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Tajawal', sans-serif;
+            font-family: 'Cairo', sans-serif;
             scroll-behavior: smooth;
-        }
-        .rtl-scroll::-webkit-scrollbar {
-            width: 8px;
-        }
-        .rtl-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .rtl-scroll::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        .rtl-scroll::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .section-title {
-            position: relative;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 50px;
-            height: 3px;
-            background-color: #14B8A6; /* Teal accent */
         }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px; 
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px; 
+            height: 40vh;
             max-height: 400px;
         }
-        @media (min-width: 768px) { 
-            .chart-container { 
-                height: 350px; 
-            } 
-        }
     </style>
+    <!--
+    Narrative & Structure Plan:
+    1. Introduction & Overview: A big headline stat and a donut chart showing the Member vs. Casual rider split.
+    2. Ride Duration Analysis: A key insight comparing the average ride length between the two groups using a bar chart.
+    3. Daily Usage Patterns: A multi-series line chart to visualize the "Commuting vs. Leisure" hourly patterns.
+    4. Rideable Type Preferences: A grouped bar chart showing bike type preferences for each user segment.
+    5. Conclusion & Recommendations: A summary of findings and actionable recommendations presented with icons.
+
+    Visualization Choices:
+    - Data: Member vs Casual Ratio -> Goal: Compare -> Visualization: Donut Chart (Chart.js) -> Justification: Ideal for showing simple proportions of a whole.
+    - Data: Avg. Ride Duration -> Goal: Compare -> Visualization: Horizontal Bar Chart (Chart.js) -> Justification: Clear and direct comparison between two categories.
+    - Data: Rides per Hour -> Goal: Show Change/Relationship -> Visualization: Line Chart (Chart.js) -> Justification: Best for showing trends over a continuous interval (time).
+    - Data: Bike Type per User -> Goal: Compare/Composition -> Visualization: Grouped Bar Chart (Chart.js) -> Justification: Excellent for comparing multiple categories across two main groups.
+    - Data: Recommendations -> Goal: Organize/Inform -> Visualization: Styled HTML List with Unicode icons -> Justification: Clean, simple, and effective for listing points without complex diagrams.
+
+    Constraint Confirmation:
+    - NO SVG was used. All charts are rendered on HTML <canvas> elements by Chart.js.
+    - NO Mermaid JS was used.
+    -->
 </head>
-<body class="bg-gray-50 text-gray-800 rtl-scroll">
+<body class="bg-gray-100 text-gray-800">
 
     <!-- Header -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <nav class="container mx-auto px-6 py-3">
-            <div class="flex justify-between items-center">
-                <div class="text-xl font-bold text-gray-800">مشروع تحليل البيانات</div>
-                <div class="hidden md:flex space-x-reverse space-x-8">
-                    <a href="#intro" class="text-gray-600 hover:text-teal-600">المقدمة</a>
-                    <a href="#investigation" class="text-gray-600 hover:text-teal-600">رحلة التحقيق</a>
-                    <a href="#solution" class="text-gray-600 hover:text-teal-600">الحل النهائي</a>
-                    <a href="#outcome" class="text-gray-600 hover:text-teal-600">النتائج</a>
-                    <a href="#lessons" class="text-gray-600 hover:text-teal-600">الدروس المستفادة</a>
-                </div>
-            </div>
+    <header class="bg-white shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-[#005F73]">تحليل بيانات Cyclistic</h1>
+            <ul class="flex space-x-4 md:space-x-8">
+                <li><a href="old_report.html" class="hover:text-[#EE9B00]">التقرير الأولي</a></li>
+                <li><a href="#overview" class="hover:text-[#EE9B00]">نظرة عامة</a></li>
+                <li><a href="#duration" class="hover:text-[#EE9B00]">مدة الرحلة</a></li>
+                <li><a href="#patterns" class="hover:text-[#EE9B00]">الأنماط اليومية</a></li>
+                <li><a href="#preferences" class="hover:text-[#EE9B00]">التفضيلات</a></li>
+            </ul>
         </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-12">
+    <main class="container mx-auto p-4 md:p-8">
 
-        <!-- Introduction Section -->
-        <section id="intro" class="text-center mb-16">
-            <h1 class="text-4xl font-bold mb-4">من البيانات الخام إلى رؤى واضحة</h1>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                هذا التقرير التفاعلي يوثق رحلة معالجة وتحضير 12 ملف بيانات لرحلات الدراجات، متغلبًا على التحديات التقنية كمتعلّم جديد في مجال تحليل البيانات، للوصول إلى مجموعة بيانات موحدة وجاهزة للتحليل.
-            </p>
-        </section>
-
-        <!-- Key Stats -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 text-center">
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <span class="text-4xl font-bold text-teal-600">12</span>
-                <p class="text-gray-500 mt-2">ملف CSV شهري</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <span class="text-4xl font-bold text-teal-600">5M+</span>
-                <p class="text-gray-500 mt-2">صف بيانات بعد التنظيف</p>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <span class="text-4xl font-bold text-teal-600">1</span>
-                <p class="text-gray-500 mt-2">قاعدة بيانات موحدة</p>
-            </div>
-        </section>
-
-        <!-- Investigation Section -->
-        <section id="investigation" class="mb-20">
-            <h2 class="text-3xl font-bold section-title">رحلة التحقيق: كشف الأخطاء وحلها</h2>
-            <div class="space-y-4">
-                <!-- Accordion Item 1 -->
-                <div class="bg-white rounded-lg shadow-md">
-                    <button class="accordion-toggle w-full text-right p-4 font-semibold text-lg flex justify-between items-center focus:outline-none">
-                        <span>🐞 المشكلة الأولى: الجدول المفقود</span>
-                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content px-4 pb-4">
-                        <p class="text-gray-600 mt-2"><strong>الخطأ:</strong> <code>no such table: combined_trips</code>. على الرغم من أنني كنت أظن أن الجدول قد أُنْشِئ، كان هذا الخطأ يظهر باستمرار.</p>
-                        <p class="text-gray-600 mt-2"><strong>التحقيق:</strong> بعد توجيه مساعدي الذكي (Gemini) ومراجعة الكود، اكتشفت أن كود دمج الجداول الشهرية لم يكن موجودًا من الأساس.</p>
-                        <p class="text-gray-600 mt-2"><strong>الحل:</strong> ✅ إضافة استعلام SQL يستخدم <code>UNION ALL</code> لدمج الجداول الشهرية في جدول واحد.</p>
-                        <button class="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none text-sm llm-explain-btn" data-problem="problem1">شرح معمّق ✨</button>
-                        <div class="llm-explanation mt-2 text-gray-700 text-sm italic"></div>
-                        <div class="llm-loading mt-2 text-gray-500 text-sm hidden">جاري تحميل الشرح...</div>
-                    </div>
-                </div>
-                <!-- Accordion Item 2 -->
-                <div class="bg-white rounded-lg shadow-md">
-                    <button class="accordion-toggle w-full text-right p-4 font-semibold text-lg flex justify-between items-center focus:outline-none">
-                        <span>🐞 المشكلة الثانية: الرمز غير المفهوم</span>
-                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content px-4 pb-4">
-                        <p class="text-gray-600 mt-2"><strong>الخطأ:</strong> <code>unrecognized token: '202406_divvy_tripdata'</code>. ظهر هذا الخطأ المحيّر في بناء جملة SQL.</p>
-                        <p class="text-gray-600 mt-2"><strong>التحقيق:</strong> اكتشفت أن أسماء الجداول التي تبدأ بأرقام تتطلب معاملة خاصة في SQLite.</p>
-                        <p class="text-gray-600 mt-2"><strong>الحل:</strong> ✅ تعديل الكود لإحاطة أسماء الجداول بعلامات اقتباس مزدوجة (<code>"table_name"</code>) داخل استعلام SQL.</p>
-                        <button class="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none text-sm llm-explain-btn" data-problem="problem2">شرح معمّق ✨</button>
-                        <div class="llm-explanation mt-2 text-gray-700 text-sm italic"></div>
-                        <div class="llm-loading mt-2 text-gray-500 text-sm hidden">جاري تحميل الشرح...</div>
-                    </div>
-                </div>
-                <!-- Accordion Item 3 -->
-                 <div class="bg-white rounded-lg shadow-md">
-                    <button class="accordion-toggle w-full text-right p-4 font-semibold text-lg flex justify-between items-center focus:outline-none">
-                        <span>🐞 المشكلة الثالثة: السبب الجذري</span>
-                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content px-4 pb-4">
-                        <p class="text-gray-600 mt-2"><strong>الخطأ:</strong> <code>Warning: No common columns found</code>. كانت هذه الرسالة هي نقطة التحول، حيث فشل الكود في إيجاد أي أعمدة مشتركة بين الجداول.</p>
-                        <p class="text-gray-600 mt-2"><strong>التحقيق:</strong> بتوجيهي لمساعدي الذكي لطباعة أعمدة كل جدول، اكتشفنا أن ملف CSV واحدًا (مايو 2024) كان بتنسيق خاطئ، حيث تم قراءة جميع الأعمدة كعمود واحد كبير.</p>
-                        <p class="text-gray-600 mt-2"><strong>الحل:</strong> ✅ بعد عدة محاولات فاشلة، كان القرار هو حذف الملف المشكل من المصدر، مما سمح ببناء قاعدة بيانات نظيفة من 11 ملفًا متسقًا في البداية، ثم تم تصحيح المشكلة لاحقًا للتعامل مع 12 شهرًا.</p>
-                        <button class="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none text-sm llm-explain-btn" data-problem="problem3">شرح معمّق ✨</button>
-                        <div class="llm-explanation mt-2 text-gray-700 text-sm italic"></div>
-                        <div class="llm-loading mt-2 text-gray-500 text-sm hidden">جاري تحميل الشرح...</div>
-                    </div>
-                </div>
-                <!-- Accordion Item 4 -->
-                <div class="bg-white rounded-lg shadow-md">
-                    <button class="accordion-toggle w-full text-right p-4 font-semibold text-lg flex justify-between items-center focus:outline-none">
-                        <span>💾 المشكلة الرابعة: جدار التخزين</span>
-                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content px-4 pb-4">
-                        <p class="text-gray-600 mt-2"><strong>المشكلة:</strong> امتلاء مساحة التخزين المجانية في Google Drive (15 جيجابايت)، مما منعني من حفظ قاعدة البيانات الكبيرة بشكل دائم.</p>
-                        <p class="text-gray-600 mt-2"><strong>التحقيق:</strong> كان القرار استباقيًا وسريعًا.</p>
-                        <p class="text-gray-600 mt-2"><strong>الحل:</strong> ✅ إنشاء حساب Google جديد وتخصيصه بالكامل لهذا المشروع، مما وفر لي مساحة كافية ومستقلة لمواصلة العمل دون عوائق.</p>
-                        <button class="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none text-sm llm-explain-btn" data-problem="problem4">شرح معمّق ✨</button>
-                        <div class="llm-explanation mt-2 text-gray-700 text-sm italic"></div>
-                        <div class="llm-loading mt-2 text-gray-500 text-sm hidden">جاري تحميل الشرح...</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Final Solution Section -->
-        <section id="solution" class="mb-20">
-            <h2 class="text-3xl font-bold section-title">الحل النهائي للكود</h2>
-            <p class="text-gray-600 mb-6">بعد سلسلة من التصحيحات، توصلنا إلى كود قوي يمكنه التعامل مع الأخطاء المختلفة، وتنظيف قاعدة البيانات، ودمج البيانات بكفاءة. المقتطف التالي يوضح منطق قراءة ملفات CSV النهائي.</p>
-            <div class="bg-gray-900 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
-                <pre><code># حلقة القراءة والمعالجة النهائية
-for file_path in csv_files:
-    try:
-        df = pd.read_csv(
-            file_path, 
-            header=0, 
-            quotechar='\"', 
-            engine='python'
-        )
-        
-        # توحيد أسماء الأعمدة
-        df.columns = [
-            col.replace(' ', '_').lower() 
-            for col in df.columns
-        ]
-        
-        # تحميل الجدول إلى SQLite
-        df.to_sql(
-            table_name, 
-            conn, 
-            if_exists='replace', 
-            index=False
-        )
-    except Exception as e:
-        print(f"Error processing {file_base_name}: {e}")</code></pre>
-            </div>
-        </section>
-
-        <!-- Final Outcome Section -->
-        <section id="outcome" class="mb-20">
-            <h2 class="text-3xl font-bold section-title">النتائج النهائية والتفاعلية</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <!-- Data Table -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold mb-4">عينة من البيانات المدمجة</h3>
-                    <div class="space-x-reverse space-x-2 mb-4">
-                        <button onclick="showData('head')" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 focus:outline-none">أول 5 صفوف</button>
-                        <button onclick="showData('tail')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none">آخر 5 صفوف</button>
-                        <button onclick="showData('sample')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none">عينة عشوائية</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full text-sm">
-                            <thead class="bg-gray-100">
-                                <tr id="table-header"></tr>
-                            </thead>
-                            <tbody id="table-body">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- Chart -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                     <h3 class="text-xl font-semibold mb-4">توزيع أنواع المستخدمين</h3>
-                    <div class="chart-container relative h-80 md:h-96 w-full max-w-md mx-auto">
+        <!-- Section 1: Overview -->
+        <section id="overview" class="text-center mb-16 pt-16">
+            <h2 class="text-4xl font-bold text-[#005F73] mb-4">فهم سلوك المستخدمين: الأعضاء مقابل الركاب العاديين</h2>
+            <p class="text-lg max-w-3xl mx-auto text-gray-600">تحليل أكثر من 5 ملايين رحلة للكشف عن الفروقات الجوهرية بين العملاء السنويين والركاب العاديين، بهدف تحويلهم إلى أعضاء دائمين.</p>
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold mb-4 text-[#0A9396]">توزيع الرحلات حسب نوع العضوية</h3>
+                    <div class="chart-container mx-auto max-w-sm">
                         <canvas id="userTypeChart"></canvas>
                     </div>
                 </div>
+                <div class="text-right space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-2xl font-bold text-[#CA6702]">3.5 مليون رحلة</h4>
+                        <p class="text-gray-600">من قبل الأعضاء، مما يظهر قاعدة عملاء قوية ومخلصة.</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-2xl font-bold text-[#BB3E03]">2.0 مليون رحلة</h4>
+                        <p class="text-gray-600">من قبل الركاب العاديين، مما يمثل فرصة نمو هائلة.</p>
+                    </div>
+                </div>
             </div>
         </section>
-        
-        <!-- Lessons Learned Section -->
-        <section id="lessons" class="mb-12">
-            <h2 class="text-3xl font-bold section-title">الدروس المستفادة</h2>
-             <ul class="space-y-4 text-lg">
-                <li class="flex items-start">
-                    <span class="text-teal-500 font-bold mr-3 ml-2">✓</span>
-                    <span><strong>التفكير النقدي:</strong> تعلمت أن أحلل رسائل الخطأ بعمق وأوجه مساعدي الذكي بناءً على ملاحظاتي الدقيقة للتناقضات.</span>
-                </li>
-                 <li class="flex items-start">
-                    <span class="text-teal-500 font-bold mr-3 ml-2">✓</span>
-                    <span><strong>أهمية الأدوات:</strong> أدركت قيمة استخدام SQL لمعالجة البيانات الكبيرة قبل تحميلها، وقوة Pandas للتحليل داخل الذاكرة.</span>
-                </li>
-                 <li class="flex items-start">
-                    <span class="text-teal-500 font-bold mr-3 ml-2">✓</span>
-                    <span><strong>المثابرة:</strong> كانت هذه الرحلة تأكيدًا على أن الأخطاء هي جزء لا يتجزأ من البرمجة، وأن الصبر هو مفتاح النجاح.</span>
-                </li>
-            </ul>
+
+        <!-- Section 2: Ride Duration -->
+        <section id="duration" class="mb-16 pt-16">
+            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">تحليل مدة الرحلة: مفتاح الفروقات السلوكية</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                     <div class="text-center md:text-right">
+                        <h3 class="text-5xl font-extrabold text-[#AE2012] mb-4">أطول بـ 73%</h3>
+                        <p class="text-xl text-gray-700">يقضي الركاب العاديون وقتاً أطول على الدراجات في المتوسط، مما يشير إلى استخدامها لأغراض ترفيهية وجولات سياحية طويلة بدلاً من التنقلات اليومية السريعة.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-4 text-center text-[#0A9396]">متوسط مدة الرحلة (بالدقائق)</h4>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="rideDurationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Daily Patterns -->
+        <section id="patterns" class="mb-16 pt-16">
+            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">الأنماط اليومية: تنقل مقابل ترفيه</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-center max-w-3xl mx-auto mb-6 text-gray-600">يُظهر الأعضاء نمط ذروتين واضح (صباحاً ومساءً) يتوافق مع أوقات التنقل من وإلى العمل. في المقابل، تتركز رحلات الركاب العاديين في فترة ما بعد الظهر والمساء، مما يعزز فرضية الاستخدام الترفيهي.</p>
+                <div class="chart-container" style="height: 45vh; max-height: 450px;">
+                    <canvas id="hourlyUsageChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Preferences -->
+        <section id="preferences" class="mb-16 pt-16">
+            <h2 class="text-3xl font-bold text-center text-[#005F73] mb-8">تفضيلات أنواع الدراجات</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                 <p class="text-center max-w-3xl mx-auto mb-6 text-gray-600">يفضل كلا النوعين من المستخدمين الدراجات الكهربائية، لكن هذا التفضيل أكثر وضوحًا لدى الركاب العاديين. يشير هذا إلى أن راحة وسهولة الدراجة الكهربائية عامل جذب كبير لهذه الشريحة.</p>
+                <div class="chart-container" style="height: 45vh; max-height: 450px;">
+                    <canvas id="bikeTypeChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+         <!-- Section 5: Conclusion -->
+        <section id="conclusion" class="text-center pt-16">
+            <h2 class="text-4xl font-bold text-[#005F73] mb-4">خلاصة وتوصيات استراتيجية</h2>
+            <p class="text-lg max-w-3xl mx-auto text-gray-600 mb-8">بناءً على الفروقات السلوكية الواضحة، يمكن صياغة استراتيجيات تسويقية مستهدفة لتحويل الركاب العاديين إلى أعضاء سنويين.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#0A9396]">
+                    <span class="text-4xl">🎯</span>
+                    <h3 class="text-xl font-bold my-3">التسويق القائم على التجربة</h3>
+                    <p>استهداف الركاب العاديين بحملات تركز على متعة الرحلات الترفيهية الطويلة، واستكشاف المدينة، والفوائد الصحية لركوب الدراجات في أوقات الفراغ.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#EE9B00]">
+                    <span class="text-4xl">🎁</span>
+                    <h3 class="text-xl font-bold my-3">عروض عضوية مرنة</h3>
+                    <p>تصميم باقات عضوية جديدة قد تتضمن مزايا للدراجات الكهربائية، أو عضويات تجريبية قصيرة الأمد، لتشجيع الركاب العاديين على تجربة فوائد العضوية الكاملة.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-[#AE2012]">
+                    <span class="text-4xl">⏰</span>
+                    <h3 class="text-xl font-bold my-3">حملات موجهة حسب الوقت</h3>
+                    <p>تركيز الإعلانات والعروض الترويجية الموجهة للركاب العاديين في فترات ما بعد الظهر وعطلات نهاية الأسبوع، حيث يكونون أكثر نشاطًا واستعدادًا للتجربة.</p>
+                </div>
+            </div>
         </section>
 
     </main>
-    
+
+    <footer class="text-center p-6 mt-12 bg-gray-200">
+        <p>&copy; 2025 - تقرير تحليل بيانات Cyclistic.</p>
+    </footer>
+
     <script>
-        const API_KEY = ""; 
-
-        const PROMPT_MAP = {
-            problem1: "اشرح بأسهل طريقة ممكنة الأسباب الشائعة لخطأ 'no such table' في قواعد بيانات SQLite والحلول الممكنة للمبتدئين.",
-            problem2: "اشرح الأسباب الشائعة لخطأ 'unrecognized token' في استعلامات SQL، خاصة عندما يتعلق الأمر بأسماء الجداول التي تبدأ بأرقام أو تحتوي على أحرف خاصة، وكيفية التعامل معها.",
-            problem3: "اشرح لماذا يعتبر خطأ 'No common columns found' مشكلة حرجة عند دمج جداول البيانات في SQL باستخدام UNION ALL، وما هي الخطوات التي يجب اتخاذها لضمان وجود أعمدة مشتركة ومتطابقة.",
-            problem4: "اشرح لماذا تعتبر مساحة التخزين السحابي مشكلة رئيسية في مشاريع تحليل البيانات الكبيرة باستخدام Google Colab وGoogle Drive، وما هي الاستراتيجيات المتبعة لإدارة هذه المساحة للمبتدئين."
+        // Color Palette: Brilliant Blues
+        const palette = {
+            primary: '#005F73',
+            secondary: '#0A9396',
+            accent1: '#94D2BD',
+            accent2: '#E9D8A6',
+            highlight1: '#EE9B00',
+            highlight2: '#CA6702',
+            highlight3: '#BB3E03',
+            highlight4: '#AE2012',
+            textDark: '#333333',
+            textLight: '#FFFFFF'
         };
 
-        // Accordion functionality
-        const toggles = document.querySelectorAll('.accordion-toggle');
-        toggles.forEach(toggle => {
-            toggle.addEventListener('click', () => {
-                const content = toggle.nextElementSibling;
-                const icon = toggle.querySelector('svg');
-                
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    toggles.forEach(otherToggle => {
-                        if (otherToggle !== toggle) {
-                            otherToggle.nextElementSibling.style.maxHeight = null;
-                            otherToggle.querySelector('svg').style.transform = 'rotate(0deg)';
+        // Common Tooltip Configuration
+        const tooltipTitleCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
                         }
-                    });
-                    content.style.maxHeight = content.scrollHeight + 'px';
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            });
-        });
-
-        // LLM Explain Button functionality
-        const explainButtons = document.querySelectorAll('.llm-explain-btn');
-        explainButtons.forEach(button => {
-            button.addEventListener('click', async () => {
-                const problemId = button.dataset.problem;
-                const prompt = PROMPT_MAP[problemId];
-                const explanationDiv = button.nextElementSibling; 
-                const loadingDiv = explanationDiv.nextElementSibling;
-
-                if (!prompt) {
-                    explanationDiv.textContent = 'لا يوجد شرح متاح لهذه المشكلة.';
-                    return;
-                }
-
-                explanationDiv.textContent = ''; 
-                loadingDiv.classList.remove('hidden'); 
-                button.disabled = true;
-
-                try {
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = { contents: chatHistory };
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-                    
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-                    
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        explanationDiv.textContent = text;
-                    } else {
-                        explanationDiv.textContent = 'تعذر الحصول على شرح. حاول مرة أخرى.';
                     }
-                } catch (error) {
-                    console.error('Error fetching explanation:', error);
-                    explanationDiv.textContent = 'حدث خطأ أثناء الاتصال بالخادم. حاول مرة أخرى.';
-                } finally {
-                    loadingDiv.classList.add('hidden');
-                    button.disabled = false;
-                    button.textContent = 'شرح معمّق ✨'; 
-                }
-            });
-        });
-
-
-        // Data for table and chart (Simplified sample for SPA display)
-        const fullData = {
-            columns: ['ride_id', 'rideable_type', 'started_at', 'ended_at', 'member_casual'],
-            rows: [
-                ['CDE6023BE6B11D2F', 'electric_bike', '2024-06-11 17:20:06', '2024-06-11 17:21:39', 'casual'],
-                ['9CFB6A858D23ABF7', 'electric_bike', '2024-06-11 17:25:27', '2024-06-11 17:30:13', 'casual'],
-                ['6365EFEB64231153', 'electric_bike', '2024-06-11 11:53:50', '2024-06-11 12:08:13', 'casual'],
-                ['C806B4280D388CC0', 'electric_bike', '2024-06-11 00:14:00', '2024-06-11 00:20:35', 'casual'],
-                ['45CBD564C461DBE9', 'electric_bike', '2024-06-11 18:22:23', '2024-06-11 19:26:41', 'casual'],
-                ['CED480DDB0A70D80', 'classic_bike', '2024-06-28 16:28:16', '2024-06-28 16:37:57', 'member'],
-                ['49A64CC75B4820C2', 'electric_bike', '2024-06-17 18:13:39', '2024-06-17 18:25:21', 'member'],
-                ['FFCE5C99A4CD7610', 'classic_bike', '2024-10-01 20:43:55', '2024-10-01 20:49:03', 'member'],
-                ['7502551E4725BA21', 'electric_bike', '2024-09-13 12:35:31', '2024-09-13 12:37:16', 'member'],
-                ['FB7E34E870BAF41B', 'electric_bike', '2024-09-28 18:27:54', '2024-09-28 18:32:45', 'member'],
-                ['00EE7C31C568974F', 'electric_bike', '2025-04-29 08:25:02', '2025-04-29 08:39:47', 'member'],
-                ['B6DBC7FD6DD0DEF3', 'electric_bike', '2025-04-24 13:33:09', '2025-04-24 13:40:53', 'member'],
-                ['B099E6E3285BE09B', 'electric_bike', '2025-04-24 14:24:57', '2025-04-24 14:34:57', 'member'],
-                ['76BD307B9C12E25F', 'electric_bike', '2025-04-30 06:12:02', '2025-04-30 06:16:32', 'member'],
-                ['420F78CF3AD3E7FF', 'electric_bike', '2025-04-21 17:13:01', '2025-04-21 17:26:39', 'member']
-            ]
+                },
+                legend: {
+                    position: 'top',
+                },
+            }
         };
 
-        const tableHeader = document.getElementById('table-header');
-        const tableBody = document.getElementById('table-body');
-        
-        function populateTable(data) {
-            tableHeader.innerHTML = '';
-            tableBody.innerHTML = '';
-            
-            fullData.columns.forEach(col => {
-                const th = document.createElement('th');
-                th.className = 'p-2 font-semibold text-right';
-                th.textContent = col.replace(/_/g, ' ');
-                tableHeader.appendChild(th);
-            });
-
-            data.forEach((row, index) => {
-                const tr = document.createElement('tr');
-                tr.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-                row.forEach(cell => {
-                    const td = document.createElement('td');
-                    td.className = 'p-2';
-                    td.textContent = cell;
-                    tr.appendChild(td);
-                });
-                tableBody.appendChild(tr);
-            });
-        }
-        
-        function showData(type) {
-            let dataToShow;
-            if (type === 'head') {
-                dataToShow = fullData.rows.slice(0, 5);
-            } else if (type === 'tail') {
-                dataToShow = fullData.rows.slice(-5);
-            } else { // sample
-                const shuffled = [...fullData.rows].sort(() => 0.5 - Math.random());
-                dataToShow = shuffled.slice(0, 5); 
-            }
-            populateTable(dataToShow);
-        }
-
-        // Initial table population
-        showData('head');
-        
-        // Chart.js functionality
-        const ctx = document.getElementById('userTypeChart').getContext('2d');
-        const memberCount = fullData.rows.filter(row => row[4] === 'member').length;
-        const casualCount = fullData.rows.filter(row => row[4] === 'casual').length;
-
-        new Chart(ctx, {
+        // Chart 1: User Type Doughnut Chart
+        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
+        new Chart(userTypeCtx, {
             type: 'doughnut',
             data: {
-                labels: ['أعضاء (Member)', 'عابرون (Casual)'],
+                labels: ['أعضاء', 'عاديون'],
                 datasets: [{
-                    label: 'توزيع المستخدمين',
-                    data: [memberCount, casualCount],
-                    backgroundColor: [
-                        'rgba(20, 184, 166, 0.7)', 
-                        'rgba(107, 114, 128, 0.7)' 
-                    ],
-                    borderColor: [
-                        'rgba(20, 184, 166, 1)',
-                        'rgba(107, 114, 128, 1)'
-                    ],
-                    borderWidth: 1
+                    label: 'عدد الرحلات',
+                    data: [3505607, 1993683],
+                    backgroundColor: [palette.secondary, palette.highlight1],
+                    borderColor: palette.textLight,
+                    borderWidth: 3
                 }]
             },
             options: {
@@ -443,25 +209,130 @@ for file_path in csv_files:
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'top',
-                         labels: {
-                            font: {
-                                family: 'Tajawal'
-                            }
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Ride Duration Bar Chart
+        const rideDurationCtx = document.getElementById('rideDurationChart').getContext('2d');
+        new Chart(rideDurationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['عاديون', 'أعضاء'],
+                datasets: [{
+                    label: 'متوسط مدة الرحلة (دقائق)',
+                    data: [20.99, 12.11],
+                    backgroundColor: [palette.highlight2, palette.primary],
+                    borderRadius: 5,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                     legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
                         }
                     },
-                    tooltip: {
-                         bodyFont: {
-                            family: 'Tajawal'
-                        },
-                        titleFont: {
-                            family: 'Tajawal'
+                     y: {
+                        grid: {
+                            display: false
                         }
                     }
                 }
             }
         });
 
+        // Chart 3: Hourly Usage Line Chart
+        const hourlyUsageCtx = document.getElementById('hourlyUsageChart').getContext('2d');
+        new Chart(hourlyUsageCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 24}, (_, i) => i), // Hours 0-23
+                datasets: [
+                    {
+                        label: 'عاديون',
+                        data: [34068, 22567, 14073, 7870, 6389, 11540, 27722, 51083, 71991, 71992, 87499, 111237, 130054, 135493, 141842, 156915, 176603, 188616, 161608, 118316, 86176, 72268, 62837, 44924],
+                        borderColor: palette.highlight2,
+                        backgroundColor: `${palette.highlight2}33`,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'أعضاء',
+                        data: [30954, 19070, 10907, 7545, 8384, 33149, 97873, 191424, 245476, 166302, 145259, 168417, 191834, 190014, 191283, 238011, 327569, 372348, 289885, 202105, 140307, 108842, 78944, 49705],
+                        borderColor: palette.primary,
+                        backgroundColor: `${palette.primary}33`,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: tooltipTitleCallback.plugins,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Chart 4: Bike Type Preference Bar Chart
+        const bikeTypeCtx = document.getElementById('bikeTypeChart').getContext('2d');
+        new Chart(bikeTypeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['عاديون', 'أعضاء'],
+                datasets: [
+                    {
+                        label: 'دراجة كلاسيكية',
+                        data: [869839, 1537117],
+                        backgroundColor: palette.secondary,
+                    },
+                    {
+                        label: 'دراجة كهربائية',
+                        data: [1042394, 1912357],
+                        backgroundColor: palette.highlight1,
+                    },
+                    {
+                        label: 'سكوتر كهربائي',
+                        data: [81450, 56133],
+                        backgroundColor: palette.accent1,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: tooltipTitleCallback.plugins,
+                scales: {
+                    x: {
+                        stacked: false,
+                    },
+                    y: {
+                        stacked: false,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
