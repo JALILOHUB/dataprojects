@@ -20,6 +20,16 @@
             height: 40vh;
             max-height: 400px;
         }
+        .custom-nav-spacing li:not(:first-child) {
+    margin-right: 2rem; /* أو أي مسافة تفضلها، 1rem = 16px, 2rem = 32px */
+}
+
+/* لضبط المسافة على الشاشات الأصغر إذا أردت */
+@media (max-width: 767px) { /* هذا يمثل ما يعادل md: في Tailwind */
+    .custom-nav-spacing li:not(:first-child) {
+        margin-right: 1rem; /* مسافة أصغر للشاشات الصغيرة */
+    }
+}
     </style>
     <!--
     Narrative & Structure Plan:
@@ -47,7 +57,7 @@
     <header class="bg-white shadow-md sticky top-0 z-10">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-[#005F73]">تحليل بيانات Cyclistic</h1>
-            <ul class="flex space-x-4 md:space-x-8 space-x-reverse">
+            <ul class="flex custom-nav-spacing">
                 <li><a href="old_report.html" class="hover:text-[#EE9B00]">التقرير الأولي</a></li>
                 <li><a href="#overview" class="hover:text-[#EE9B00]">نظرة عامة</a></li>
                 <li><a href="#duration" class="hover:text-[#EE9B00]">مدة الرحلة</a></li>
